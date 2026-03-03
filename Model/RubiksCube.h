@@ -1,9 +1,9 @@
-
-
 #ifndef RUBIKS_CUBE_SOLVER_RUBIKSCUBE_H
 #define RUBIKS_CUBE_SOLVER_RUBIKSCUBE_H
 
-#include "bits/stdc++.h"
+#include <cstdint>
+#include <string>
+#include <vector>
 
 using namespace std;
 

@@ -1,6 +1,12 @@
+#include <algorithm>
+#include <cassert>
+#include <limits>
+#include <queue>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
-
-#include<bits/stdc++.h>
 #include "../Model/RubiksCube.h"
 //#include "../Model/PatternDatabase/PatternDatabase.h"
 #include "../PatternDatabases/CornerPatternDatabase.h"
@@ -46,7 +52,7 @@ private:
         priority_queue<pair<Node, int>, vector<pair<Node, int>>, compareCube> pq;
         Node start = Node(rubiksCube, 0, cornerDB.getNumMoves(rubiksCube));
         pq.push(make_pair(start, 0));
-        int next_bound = 100;
+        int next_bound = numeric_limits<int>::max();
         while (!pq.empty()) {
             auto p = pq.top();
             Node node = p.first;
@@ -82,11 +88,12 @@ public:
 
     IDAstarSolver(T _rubiksCube, string fileName) {
         rubiksCube = _rubiksCube;
-        cornerDB.fromFile(fileName);
+        bool loaded = cornerDB.fromFile(fileName);
+        assert(loaded && "Failed to load corner pattern database file");
     }
 
     vector<RubiksCube::MOVE> solve() {
-        int bound = 1;
+        int bound = max(1, static_cast<int>(cornerDB.getNumMoves(rubiksCube)));
         auto p = IDAstar(bound);
         while (p.second != bound) {
             resetStructure();

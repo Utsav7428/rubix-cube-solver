@@ -1,10 +1,13 @@
-
 #ifndef RUBIKS_CUBE_SOLVER_PATTERNDATABASE_H
 #define RUBIKS_CUBE_SOLVER_PATTERNDATABASE_H
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include "../Model/RubiksCube.h"
 #include "NibbleArray.h"
-#include "bits/stdc++.h"
 
 using namespace std;
 

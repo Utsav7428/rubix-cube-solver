@@ -1,6 +1,9 @@
+#include <algorithm>
+#include <cassert>
+#include <queue>
+#include <unordered_map>
+#include <vector>
 
-
-#include<bits/stdc++.h>
 #include "../Model/RubiksCube.h"
 
 #ifndef RUBIKS_CUBE_SOLVER_BFSSOLVER_H

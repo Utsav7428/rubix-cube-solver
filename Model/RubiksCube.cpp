@@ -1,3 +1,5 @@
+#include <iostream>
+#include <random>
 
 #include "RubiksCube.h"
 
@@ -20,6 +22,7 @@ char RubiksCube::getColorLetter(COLOR color) {
         case COLOR::ORANGE:
             return 'O';
     }
+    return '?';
 }
 
 /*
@@ -64,6 +67,7 @@ string RubiksCube::getMove(MOVE ind) {
         case MOVE::B2:
             return "B2";
     }
+    return "?";
 }
 
 /*
@@ -108,6 +112,7 @@ RubiksCube &RubiksCube::move(MOVE ind) {
         case MOVE::B2:
             return this->b2();
     }
+    return *this;
 }
 
 /*
@@ -152,6 +157,7 @@ RubiksCube &RubiksCube::invert(MOVE ind) {
         case MOVE::B2:
             return this->b2();
     }
+    return *this;
 }
 
 void RubiksCube::print() const {
@@ -204,9 +210,10 @@ void RubiksCube::print() const {
 
 vector<RubiksCube::MOVE> RubiksCube::randomShuffleCube(unsigned int times) {
     vector<MOVE> moves_performed;
-    srand(time(0));
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> dist(0, 17);
     for (unsigned int i = 0; i < times; i++) {
-        unsigned int selectMove = (rand() % 18);
+        unsigned int selectMove = static_cast<unsigned int>(dist(rng));
         moves_performed.push_back(static_cast<MOVE>(selectMove));
         this->move(static_cast<MOVE>(selectMove));
     }
