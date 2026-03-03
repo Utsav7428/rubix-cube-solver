@@ -1,19 +1,29 @@
 # Rubik's Cube Solver (C++)
 
-This project implements a 3x3 Rubik's Cube solver in C++ with multiple cube representations and multiple search strategies, including an IDA* solver accelerated by a corner pattern database.
+This project implements a 3x3 Rubik's Cube solver in C++ with multiple cube representations and search strategies, including an IDA* solver accelerated by a corner pattern database.
 
 ## What this project does
 
 - Models a Rubik's Cube with interchangeable internal representations.
 - Supports all 18 face moves (`L, L', L2, R, R', R2, U, U', U2, D, D', D2, F, F', F2, B, B', B2`).
-- Can scramble a cube, print it, and solve it.
+- Scrambles, prints, and solves cube states.
 - Includes search-based solvers:
   - DFS
   - BFS
   - IDDFS
   - IDA* (with corner pattern database heuristic)
 
-The current `main.cpp` runs the bitboard model + IDA* solver using a precomputed corner database file.
+The default runtime path uses `RubiksCubeBitboard` + `IDAstarSolver` with the precomputed corner database.
+
+## Recent updates
+
+- Replaced non-portable `bits/stdc++.h` usage in core files with explicit standard headers.
+- Removed hardcoded absolute database path from `main.cpp`.
+- Added runtime database path argument support.
+- Added CLI shuffle control with `--shuffle N` and `--shuffle=N`.
+- Added startup checks for missing database files.
+- Improved cube shuffle randomness using `std::mt19937`.
+- Hardened `IDAstarSolver` bound initialization and DB load checks.
 
 ## Repository layout
 
@@ -104,14 +114,14 @@ The IDA* heuristic comes from a precomputed corner pattern database.
 - `CornerDBMaker`: BFS generator that fills DB and saves to file.
 - `PermutationIndexer`: ranks permutations (Lehmer-code style indexing).
 
-`Databases/cornerDepth5V1.txt` is the binary file loaded by `IDAstarSolver` in the current `main.cpp`.
+`Databases/cornerDepth5V1.txt` is the binary file loaded by `IDAstarSolver`.
 
 ## Current program flow (`main.cpp`)
 
 1. Creates a solved `RubiksCubeBitboard`.
-2. Applies random shuffle moves.
+2. Applies random shuffle moves (default `13`, configurable via `--shuffle`).
 3. Prints scrambled cube and shuffle sequence.
-4. Loads corner DB from `Databases/cornerDepth5V1.txt`.
+4. Loads corner DB from `Databases/cornerDepth5V1.txt` (or path passed as first positional arg).
 5. Runs `IDAstarSolver::solve()`.
 6. Prints solved cube and solution move sequence.
 
@@ -131,20 +141,20 @@ cmake --build build --config Release
 
 ## Run
 
-Run the built executable from your build folder.
+From project root:
 
-Note: `main.cpp` currently uses an absolute Windows path for the database file:
+```bash
+# default database path, default shuffle=13
+./build/Release/rubiks_cube_solver
 
-```cpp
-string fileName = "C:\\Users\\utsav\\rubix\\rubiks-cube-solver\\Databases\\cornerDepth5V1.txt";
+# custom shuffle
+./build/Release/rubiks_cube_solver --shuffle 20
+
+# custom database path + shuffle
+./build/Release/rubiks_cube_solver Databases/cornerDepth5V1.txt --shuffle 20
+
+# help
+./build/Release/rubiks_cube_solver --help
 ```
 
-If you move the project, update this path (or switch to a relative path).
-
-## Notes and limitations
-
-- `README` was missing originally; this file documents the current implementation.
-- Search complexity still grows quickly for deep scrambles; IDA* + pattern DB helps significantly.
-- Database generation depth is bounded in `CornerDBMaker` (`curr_depth == 9` break in current code).
-- Project is currently oriented around corners heuristic only.
-
+If the database file is missing or invalid path is given, the program exits with an error message before solving.
